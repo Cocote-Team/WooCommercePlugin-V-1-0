@@ -22,13 +22,8 @@ function mysite_woocommerce_order_status_completed( $order_id ) {
             ' '.$resultat_order['email'].
             ' '.$order_id.
             ' '.$resultat_order['orderPrice'] );
-        //$cashback_cocote = new CashbackCocote($resultat->shop_id,$resultat->private_key,$resultat_order['email'],$order_id,number_format($resultat_order['orderPrice'], 2, '.', ' '),'EUR');
-        //$cashback_cocote->sendOrderToCocote();
     }
     fclose($fp);
-
-    //error_log( "Order complete for order $order_id", 0 );
-    error_log( 'FUNCTION : ' . __FUNCTION__ . '(), OrderID = ' . var_export( $order_id , true ) );
 }
 
 function check_cocote_export()

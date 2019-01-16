@@ -54,22 +54,12 @@ class CashbackCocote
             curl_setopt($curl, CURLOPT_POST, 1);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 
-            //curl_setopt($curl, CURLOPT_URL, "https://preprod-fr.cocote.com/api/cashback/request"); // API vers la PréProd
             curl_setopt($curl, CURLOPT_URL, "https://fr.cocote.com/api/cashback/request");    // API de prod
 
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
-            // pour la préprod
-            //$Auth_Username = "cocote";
-            //$Auth_Password = "Jhxtwr7zhe37P05wThe7wIQVQ/A=";
-            //curl_setopt($curl, CURLOPT_USERPWD, "{$Auth_Username}:{$Auth_Password}");
-
-            //curl_setopt($curl, CURLOPT_TIMEOUT_MS, 2000); // Time out de X secondes
-
             $result = curl_exec($curl);
             curl_close($curl);
-
-            //print_r(json_decode($result));
 
             $json_data = json_decode($result);
             $status = '';
