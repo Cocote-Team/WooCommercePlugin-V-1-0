@@ -1,0 +1,22 @@
+p.submit-cocotefeed {
+    text-align: right;
+    max-width: 100%;
+    margin-top: 20px;
+    padding-top: 10px;
+}
+
+
+.fieldset-cocotefeed {
+    border-width: 1px;
+    border-color: #ccc;
+    border-style: solid;
+    padding: 10px 5px 10px 10px;
+    border-radius:8px;
+}
+
+.form-table p.note {
+    margin: 0;
+    padding: 0 0 0 13px;
+    background: url(http://preprod.arrange.fr/skin/adminhtml/default/default/images/note_bg.gif) 1px 6px no-repeat;
+    font-size: 11px;
+}

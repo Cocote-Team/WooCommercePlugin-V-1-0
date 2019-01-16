@@ -2,7 +2,7 @@
 
 This module generates feed and communicates with cocote.com website to let it aggregate your products data.
 
-1) Installation To install the module
+1) Install the module
 
 Clone the Plugin : https://github.com/Cocote-Team/woo-cocotefeed.git
 
