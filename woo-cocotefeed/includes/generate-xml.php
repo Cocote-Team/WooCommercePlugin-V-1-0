@@ -99,7 +99,6 @@ class GenerateXml
                 }
                 $i++;
             }
-            //$custom_fields[$attribute_name] = explode(',', $product->get_attribute($attribute['name']));
         }
 
         $response[] = new DOMElement('brand', $attribute_name_all); // REQUIS

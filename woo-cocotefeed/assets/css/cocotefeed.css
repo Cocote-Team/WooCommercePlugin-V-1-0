@@ -13,10 +13,3 @@ p.submit-cocotefeed {
     padding: 10px 5px 10px 10px;
     border-radius:8px;
 }
-
-.form-table p.note {
-    margin: 0;
-    padding: 0 0 0 13px;
-    background: url(http://preprod.arrange.fr/skin/adminhtml/default/default/images/note_bg.gif) 1px 6px no-repeat;
-    font-size: 11px;
-}

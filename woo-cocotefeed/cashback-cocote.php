@@ -20,8 +20,8 @@ class CashbackCocote
 
     public function sendOrderToCocote()
     {
-        $fp = fopen(plugin_dir_path( __DIR__ ). 'log' . DIRECTORY_SEPARATOR . 'log_' . date('Ymd') . '.log', 'a+');
-        $observer = '[LOG ' . date('Y-m-d H:i:s') . '] Start function sendOrderToCocote()';
+        $fp = fopen( __DIR__ . DIRECTORY_SEPARATOR .'log'. DIRECTORY_SEPARATOR . 'log_' . date('Ymd') . '.log', 'a+');
+        $observer = '[LOG ' . date('Y-m-d H:i:s') . '] Start function CashbackCocote:sendOrderToCocote()';
         fwrite($fp, $observer . "\n");
 
         try {
@@ -47,6 +47,8 @@ class CashbackCocote
                 fwrite($fp, '[LOG ' . date('Y-m-d H:i:s') . '] no curl'. "\n");
                 throw new Exception('no curl');
             }
+
+            $start = mktime();
 
             $curl = curl_init();
             curl_setopt($curl, CURLOPT_POST, 1);
@@ -76,6 +78,10 @@ class CashbackCocote
 
             fwrite($fp, '[LOG ' . date('Y-m-d H:i:s') . '] Status Curl = '.$status. " \n");
             fwrite($fp, '[LOG ' . date('Y-m-d H:i:s') . '] Errors Curl = '.$errors. " \n");
+            $end = mktime();
+            $dure = date("s", $end - $start );
+            fwrite($fp, '[LOG ' . date('Y-m-d H:i:s') . '] durée Curl = '. $dure . " s.\n");
+
 
         } catch (Exception $e) {
             fwrite($fp, '[LOG ' . date('Y-m-d H:i:s') . '] '.$e->getMessage(). "\n");
@@ -86,4 +92,9 @@ class CashbackCocote
         fwrite($fp, $observer . "\n");
         fclose($fp);
     }
+}
+
+if(isset($argv[1]) && isset($argv[2]) && isset($argv[3]) && isset($argv[4]) && isset($argv[5]) ) {
+    $cashback_cocote = new CashbackCocote($argv[1], $argv[2], $argv[3], $argv[4], number_format($argv[5], 2, '.', ' '), 'EUR');
+    $cashback_cocote->sendOrderToCocote();
 }

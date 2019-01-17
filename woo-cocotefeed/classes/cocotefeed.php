@@ -66,20 +66,21 @@ class Cocotefeed
     public function menu_html()
     {
         echo "<h1 class='page-title'>Configurer</h1> ";
-        ?>
-        <form method="post" action="">
-            <?php wp_nonce_field($this->action, 'save-cocotefeed-verif'); ?>
-            <fieldset class="fieldset-cocotefeed">
-                <legend><?php echo get_admin_page_title(); ?></legend>
-            <?php settings_fields('cocote_feed_settings') ?>
 
-            <?php do_settings_sections('cocote_feed_settings') ?>
-            </fieldset>
+        echo '<form method="post" action="">';
+            wp_nonce_field($this->action, 'save-cocotefeed-verif');
+            echo '<fieldset class="fieldset-cocotefeed">';
+                echo '<legend>'; echo get_admin_page_title(); echo '</legend>';
+            settings_fields('cocote_feed_settings');
+
+            do_settings_sections('cocote_feed_settings');
+            echo '</fieldset>
             <p class="submit-cocotefeed">
+                <!-- <button type="submit" id="preview-btn" class="button-secondary preview-btn" value="Export XML" title="Exporter le catalogue en fichier XML;!"><a href="<?php if(isset($this->url_xml_file) && !empty($this->url_xml_file)){echo $this->url_xml_file;} ?>" target="_blank">Export XML</a></button> -->
                 <input type="submit" id="save-only-btn" name="save-only-btn" class="button-primary" value="Enregistrer" />
             </p>
-        </form>
-        <?php
+        </form>';
+
     }
 
     public function register_settings()
@@ -96,21 +97,16 @@ class Cocotefeed
         add_settings_field('nb_product', 'Nombre de produit(s) à exporter', array($this, 'nb_product_html'), 'cocote_feed_settings', 'cocote_feed_section');
         add_settings_field('shop_id', 'Shop ID', array($this, 'shop_id_html'), 'cocote_feed_settings', 'cocote_feed_section');
         add_settings_field('private_key', 'Private Key', array($this, 'private_key_html'), 'cocote_feed_settings', 'cocote_feed_section');
-
         add_settings_field('cocote_checkbox', 'Exportez uniquemment les produits en stock', array($this,'checkbox_display'), 'cocote_feed_settings', 'cocote_feed_section');
-
         add_settings_field('url_xml', 'Lien vers le flux XML', array($this, 'url_xml'), 'cocote_feed_settings', 'cocote_feed_section');
-
-
     }
 
 
     public function status_html()
-    {?>
-        <input type="text" name="status_html" value="<?php
-        echo $this->check_Configuration_Status();
-        ?>" readonly="readonly" />
-        <?php
+    {
+        echo '<input type="text" name="status_html" value="'.
+            $this->check_Configuration_Status().
+            '" readonly="readonly" />';
     }
 
     public function nb_product_html()
@@ -118,27 +114,30 @@ class Cocotefeed
         if (isset($_POST['cocote_checkbox']) && !empty($_POST['cocote_checkbox']))
             $this->status_stock = $_POST['cocote_checkbox'];
 
-        ?>
-        <input type="text" name="nb_product_html" value="<?php
-        echo $this->check_nb_product($this->status_stock);
-        ?>" readonly="readonly"/>
-        <?php
+        echo '<input type="text" name="nb_product_html" value="'.
+            $this->check_nb_product($this->status_stock).
+            '" readonly="readonly"/>';
     }
 
     public function url_xml()
     {
         if (isset($_POST['save-only-btn']) && !empty($_POST['save-only-btn']) ) {
-            ?>
-            <a href="<?php echo $this->url_xml_file; ?>" target="_blank"><?php echo $this->url_xml_file; ?></a>
-            <?php
+            echo '<a href="'.
+                $this->url_xml_file.
+                '" target="_blank">'.
+                $this->url_xml_file.
+                '</a>';
         }else{
             $row = $this->get_cocote_export();
             if (!is_null($row)) {
-                ?><a href="<?php echo $row->export_xml; ?>" target="_blank"><?php echo $row->export_xml; ?></a><?php
-
+                echo '<a href="'.
+                    $row->export_xml.
+                    '" target="_blank">'.
+                    $row->export_xml.
+                    '</a>';
             }
         }
-        ?><p style="font-size: 11px;"><span>Votre flux sera réactualisé automatiquement chaque jour vers 3 heures (matin)</span><p><?php
+        echo '<p style="font-size: 11px;"><span>Votre flux sera réactualisé automatiquement chaque jour vers 3 heures (matin)</span><p>';
     }
 
     public function section_html()
@@ -148,29 +147,32 @@ class Cocotefeed
 
     public function shop_id_html()
     {
-        ?>
-        <input type="text" name="shop_id" value="<?php
+        echo '<input type="text" name="shop_id" value="';
+
         if (isset($_POST['shop_id']) && !empty($_POST['shop_id'])) {
             echo $_POST['shop_id'];
         } else {
             echo get_option('shop_id');
         }
-        ?>" required="required"/>
-        <p style="font-size: 11px;"><span>Retrouvez votre identifiant depuis votre compte marchand Cocote</span><p>
-        <?php
+
+        echo '" required="required"/>';
+        echo '<p style="font-size: 11px;"><span>Retrouvez votre identifiant depuis votre compte marchand Cocote.</span><p>';
+
     }
 
     public function private_key_html()
-    {?>
-        <input type="password" name="private_key" value="<?php
+    {
+        echo '<input type="password" name="private_key" value="';
+
         if (isset($_POST['private_key']) && !empty($_POST['private_key'])) {
             echo $_POST['private_key'];
         } else {
             echo get_option('private_key');
         }
-        ?>" required="required"/>
-        <p style="font-size: 11px;"><span>Retrouvez votre clé privée depuis votre compte marchand Cocote</span><p>
-        <?php
+
+        echo '" required="required"/>';
+        echo '<p style="font-size: 11px;"><span>Retrouvez votre clé privée depuis votre compte marchand Cocote.</span><p>';
+
     }
 
     public static function check_Configuration_Status()
@@ -231,14 +233,16 @@ class Cocotefeed
         else {
             $checked = get_option('cocote_checkbox');
         }
-        ?>
-        <input type="checkbox" name="cocote_checkbox" value="1" <?php
+
+        echo '<input type="checkbox" name="cocote_checkbox" value="1"';
+
         if (isset($_POST['cocote_checkbox']) && !empty($_POST['cocote_checkbox']))
             checked(1, $checked, true);
          else
             checked(1, $checked, true);
-        ?> />
-        <?php
+
+        echo '/>';
+
     }
 
     public static function cron_cocote_generate_xml()

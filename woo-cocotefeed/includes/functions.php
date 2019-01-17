@@ -1,10 +1,11 @@
 <?php
 
-include plugin_dir_path( __FILE__ ).'cashback-cocote.php';
-
 add_action( 'woocommerce_order_status_completed', 'mysite_woocommerce_order_status_completed', 10, 1 );
 
 function mysite_woocommerce_order_status_completed( $order_id ) {
+    if (!file_exists(plugin_dir_path( __DIR__ ). 'log')) {
+        mkdir(plugin_dir_path( __DIR__ ). 'log');
+    }
     $fp = fopen(plugin_dir_path( __DIR__ ). 'log' . DIRECTORY_SEPARATOR . 'log_' . date('Ymd') . '.log', 'a+');
     $observer = '[LOG ' . date('Y-m-d H:i:s') . '] function mysite_woocommerce_order_status_completed()';
     fwrite($fp, $observer . "\n");
@@ -16,7 +17,7 @@ function mysite_woocommerce_order_status_completed( $order_id ) {
 
     if($resultat!=0 && isset($order_id) && isset($resultat->shop_id) && isset($resultat->private_key) && isset($resultat_order['orderPrice']) && isset($resultat_order['email'])) {
 
-        exec('php '.plugin_dir_path( __DIR__ ) . DIRECTORY_SEPARATOR . 'cashback-cocote-2.php'.
+        exec('php '.plugin_dir_path( __DIR__ ) . DIRECTORY_SEPARATOR . 'cashback-cocote.php'.
             ' '.$resultat->shop_id.
             ' '.$resultat->private_key.
             ' '.$resultat_order['email'].

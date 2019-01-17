@@ -4,7 +4,7 @@ This module generates feed and communicates with cocote.com website to let it ag
 
 1) Install the module
 
-Clone the Plugin : https://github.com/Cocote-Team/woo-cocotefeed.git
+Clone the Plugin : git clone https://github.com/Cocote-Team/WooCommercePlugin.git
 
 or
 
@@ -12,7 +12,7 @@ Download the plugin .zip
 
 2) Transfer and copy
 
-Copy the Plugin woo-cocotefeed to wp-content/plugins folder in your serveur.
+Copy the file "woo-cocotefeed" to wp-content/plugins folder in your server.
 
 3) In the Back-Office
 
@@ -20,7 +20,7 @@ Admin Wordpress : Plugins > Installed Plugins
 
                    select "Activate".
 
-5) Configured
+5) Configure
 
 Admin Wordpress : Plugins > Installed Plugins > WooCocote feed
 
@@ -34,7 +34,7 @@ Pour installer ce module:
 
 1) Le Plugin
 
-Cloner le Plugin : https://github.com/Cocote-Team/woo-cocotefeed.git
+Cloner le Plugin : git clone https://github.com/Cocote-Team/WooCommercePlugin.git
 
 ou
 
