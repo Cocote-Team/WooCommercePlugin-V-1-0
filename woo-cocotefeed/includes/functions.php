@@ -2,6 +2,24 @@
 
 add_action( 'woocommerce_order_status_completed', 'mysite_woocommerce_order_status_completed', 10, 1 );
 add_action( 'woocommerce_order_status_cancelled', 'mysite_woocommerce_order_status_cancelled', 10, 1 );
+add_action( 'woocommerce_new_order', 'tracking_confirm_script_js_for_wc_order',  1, 1  );
+
+function tracking_confirm_script_js_for_wc_order($order_id ) {
+    // insert tracking script confirm js
+    $resultat = check_cocote_export();
+    $resultat_order = check_order( $order_id );
+    if(isset($order_id) && isset($resultat->shop_id) && isset($resultat_order['orderPrice'])) {
+        echo '<script src="https://js.cocote.com/script-confirm-fr.min.js"></script>';
+        echo '<script type="text/javascript">';
+            echo 'new CocoteTSC({
+                lang: "fr",
+                mSiteId: '.$resultat->shop_id.',
+                amount: '.$resultat_order['orderPrice'].',
+                orderId: '.$order_id.'
+            });
+        </script>';
+    }
+}
 
 function mysite_woocommerce_order_status_completed( $order_id ) {
     // execute API cashback
@@ -32,8 +50,17 @@ function check_order( $order_id ){
     $data_order = array();
     $data_order['orderPrice'] = $order->get_total();
     $data_order['email'] = $order->get_billing_email();
+    $i = 0;
+    foreach ($order->get_items() as $item_key => $item_values):
+        if($i==0)
+            $data_order['product_ids'] .= $item_values->get_product_id(); // the Product id
+        else
+            $data_order['product_ids'] .= ','.$item_values->get_product_id();
 
-   return $data_order;
+        $i++;
+    endforeach;
+
+    return $data_order;
 }
 
 function exec_cashback($order_id, $status){
@@ -45,6 +72,7 @@ function exec_cashback($order_id, $status){
     fwrite($fp, $observer . "\n");
     $observer = '[LOG ' . date('Y-m-d H:i:s') . '] '."Order complete for order $order_id";
     fwrite($fp, $observer . "\n");
+    fclose($fp);
 
     $resultat = check_cocote_export();
     $resultat_order = check_order( $order_id );
@@ -57,8 +85,8 @@ function exec_cashback($order_id, $status){
             ' '.$resultat_order['email'].
             ' '.$order_id.
             ' '.$resultat_order['orderPrice'].
-            ' '.$status
+            ' '.$status.
+            ' '.$resultat_order['product_ids']
             );
     }
-    fclose($fp);
 }

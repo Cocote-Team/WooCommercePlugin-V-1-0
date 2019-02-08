@@ -26,7 +26,6 @@ class Cocotefeed
         add_action('admin_init', array($this, 'register_settings'));
         add_action('wp_loaded', array($this, 'save_cocotefeed'));
         add_action('woo_cocote', array($this,'woo_cocote_generate_xml' ));
-
     }
 
     public function save_cocotefeed()
@@ -99,6 +98,14 @@ class Cocotefeed
         add_settings_field('private_key', 'Private Key', array($this, 'private_key_html'), 'cocote_feed_settings', 'cocote_feed_section');
         add_settings_field('cocote_checkbox', 'Exportez uniquemment les produits en stock', array($this,'checkbox_display'), 'cocote_feed_settings', 'cocote_feed_section');
         add_settings_field('url_xml', 'Lien vers le flux XML', array($this, 'url_xml'), 'cocote_feed_settings', 'cocote_feed_section');
+
+
+        $resultat = check_cocote_export();
+        if(isset($resultat->shop_id)) {
+            update_option('shop_id', $resultat->shop_id);// = $resultat->shop_id;
+            update_option('private_key', $resultat->private_key);// = $resultat->private_key;
+            update_option('cocote_checkbox', $resultat->export_status);// =$resultat->export_status;
+        }
     }
 
 
@@ -224,7 +231,7 @@ class Cocotefeed
         return $url;
     }
 
-    function checkbox_display()
+    public function checkbox_display()
     {
 
         if (isset($_POST['cocote_checkbox']) && !empty($_POST['cocote_checkbox'])) {
@@ -254,7 +261,7 @@ class Cocotefeed
         }
     }
 
-    function woo_cocote_generate_xml() {
+    public function woo_cocote_generate_xml() {
         // generate xml by cron
         $row = $this->get_cocote_export();
         if (is_null($row)) {
@@ -265,7 +272,7 @@ class Cocotefeed
         $this->generate_cocote_Xml($cron_status_stock);
     }
 
-    function get_cocote_export(){
+    public function get_cocote_export(){
         global $wpdb;
 
         $row = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}cocote_export WHERE 1");

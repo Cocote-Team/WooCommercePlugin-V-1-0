@@ -3,7 +3,7 @@
  * Plugin Name: WooCocote feed
  * Plugin URI: https://fr.cocote.com/mon-compte/ma-boutique/script-de-suivi
  * Description: Exporter le catalogue Woocommerce dans un flux XML pour Cocote
- * Version: 1.0.0
+ * Version: 1.0.2
  * Author: Vang KU
  * Author URI: http://publish-it.fr/
  * Developer: Vang KU
@@ -44,9 +44,25 @@ class WooCocoteFeed
 
         add_action('admin_menu', array($this, 'wpshout_enqueue_styles'));
         add_filter( 'plugin_action_links_'.plugin_basename( __FILE__ ), array($this,'baw_settings_action_links'), 10, 2 );
+        add_action('wp_head', array($this,'tracking_script_js'));        
     }
 
-    function wpshout_enqueue_styles() {
+    public function tracking_script_js() {
+        $resultat = check_cocote_export();
+        if(isset($resultat->shop_id)){
+            $mSiteId = $resultat->shop_id;
+            // insert tracking script js
+            echo '<script src="https://js.cocote.com/script-fr.min.js"></script>';
+            echo '<script type="text/javascript">';
+            echo 'new CocoteTSA({
+                        lang: "fr",
+                        mSiteId: ' . $mSiteId . '
+                    });
+                </script>';
+        }
+    }
+
+    public function wpshout_enqueue_styles() {
         $file_url = plugins_url('assets/css/cocotefeed.css', __FILE__);
 
         // Actually load up the stylesheet
