@@ -4,6 +4,9 @@ add_action( 'woocommerce_order_status_completed', 'mysite_woocommerce_order_stat
 add_action( 'woocommerce_order_status_cancelled', 'mysite_woocommerce_order_status_cancelled', 10, 1 );
 add_action( 'woocommerce_new_order', 'tracking_confirm_script_js_for_wc_order',  1, 1  );
 
+/**
+ * @param $order_id
+ */
 function tracking_confirm_script_js_for_wc_order($order_id ) {
     // insert tracking script confirm js
     $resultat = check_cocote_export();
@@ -21,16 +24,25 @@ function tracking_confirm_script_js_for_wc_order($order_id ) {
     }
 }
 
+/**
+ * @param $order_id
+ */
 function mysite_woocommerce_order_status_completed( $order_id ) {
     // execute API cashback
     exec_cashback($order_id, 'completed');
 }
 
+/**
+ * @param $order_id
+ */
 function mysite_woocommerce_order_status_cancelled( $order_id ){
     // execute API cashback
     exec_cashback($order_id, 'cancelled');
 }
 
+/**
+ * @return int
+ */
 function check_cocote_export()
 {
     global $wpdb;
@@ -44,6 +56,10 @@ function check_cocote_export()
     }
 }
 
+/**
+ * @param $order_id
+ * @return array
+ */
 function check_order( $order_id ){
     $order = wc_get_order( $order_id );
 
@@ -63,6 +79,10 @@ function check_order( $order_id ){
     return $data_order;
 }
 
+/**
+ * @param $order_id
+ * @param $status
+ */
 function exec_cashback($order_id, $status){
     if (!file_exists(plugin_dir_path( __DIR__ ). 'log')) {
         mkdir(plugin_dir_path( __DIR__ ). 'log');

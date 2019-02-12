@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class CashbackCocote
+ */
 class CashbackCocote
 {
     public $_shopId;
@@ -11,6 +14,17 @@ class CashbackCocote
     public $_orderState;
     public $_skus;
 
+    /**
+     * CashbackCocote constructor.
+     * @param $shopId
+     * @param $privateKey
+     * @param $email
+     * @param $orderId
+     * @param $orderPrice
+     * @param $priceCurrency
+     * @param $orderState
+     * @param $skus
+     */
     public function __construct($shopId, $privateKey, $email, $orderId, $orderPrice, $priceCurrency, $orderState, $skus){
         $this->_shopId          = $shopId;
         $this->_privateKey      = $privateKey;
@@ -22,6 +36,9 @@ class CashbackCocote
         $this->_skus            = $skus;
     }
 
+    /**
+     * send Order To Cocote function
+     */
     public function sendOrderToCocote()
     {
         $fp = fopen( __DIR__ . DIRECTORY_SEPARATOR .'log'. DIRECTORY_SEPARATOR . 'log_' . date('Ymd') . '.log', 'a+');
