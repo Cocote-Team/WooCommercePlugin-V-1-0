@@ -114,6 +114,10 @@ class GenerateXml
         $currentprod->appendChild($domtree->createElement('keywords', strip_tags(wc_get_product_category_list($product_id,'|','',''))));
         $currentprod->appendChild($domtree->createElement('brand', $attribute_name_all));
 
+        $descTitle = $domtree->createElement('title');
+        $descTitle->appendChild($domtree->createCDATASection($product->get_name()));
+        $currentprod->appendChild($descTitle);
+
         $descTag = $domtree->createElement('description');
         $descTag->appendChild($domtree->createCDATASection(strip_tags($product->get_description())));
         $currentprod->appendChild($descTag);
