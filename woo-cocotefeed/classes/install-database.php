@@ -4,13 +4,22 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
+/**
+ * Class install_database
+ */
 class install_database
 {
+    /**
+     * install_database constructor.
+     */
     public function __construct()
     {
         // RAS
     }
 
+    /**
+     * install function
+     */
     public static function install()
     {
         global $wpdb;
@@ -25,6 +34,9 @@ class install_database
                       ") ;
     }
 
+    /**
+     * uninstall function
+     */
     public static function uninstall()
     {
         global $wpdb;

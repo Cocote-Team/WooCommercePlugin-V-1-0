@@ -24,11 +24,17 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
+/**
+ * Class WooCocoteFeed
+ */
 class WooCocoteFeed
 {
     private static $instance = false;
     public $submenu;
 
+    /**
+     * WooCocoteFeed constructor.
+     */
     public function __construct()
     {
         $this->submenu = 'cocote-submenu-page';
@@ -47,6 +53,9 @@ class WooCocoteFeed
         add_action('wp_head', array($this,'tracking_script_js'));        
     }
 
+    /**
+     * Tracking Script JS function
+     */
     public function tracking_script_js() {
         $resultat = check_cocote_export();
         if(isset($resultat->shop_id)){
@@ -62,6 +71,9 @@ class WooCocoteFeed
         }
     }
 
+    /**
+     * WPshout Enqueue Styles function
+     */
     public function wpshout_enqueue_styles() {
         $file_url = plugins_url('assets/css/cocotefeed.css', __FILE__);
 
