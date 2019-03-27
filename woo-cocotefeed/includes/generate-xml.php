@@ -46,9 +46,9 @@ class GenerateXml
                 'return' => 'ids',
             );
         }
-        
+
         $products = wc_get_products( $args );
-        
+
         $domtree = new DOMDocument('1.0', 'UTF-8');
 
         $root= $domtree->createElement("shop");
@@ -57,12 +57,16 @@ class GenerateXml
         $generated = $domtree->createElement('generated');
         $attr = $domtree->createAttribute('cms');
         $attr->value = $this->cms;
+        $generated->appendChild($attr);
 
         $attr2 = $domtree->createAttribute('plugin_version');
+        $attr2->value = (new Cocotefeed())->getVersion();
+        $generated->appendChild($attr2);
+
+        $attr2 = $domtree->createAttribute('woocommerce_version');
         $attr2->value = $this->wpbo_get_woo_version_number();
         $generated->appendChild($attr2);
 
-        $generated->appendChild($attr);
         $domtree->appendChild($generated);
         $generated = $root->appendChild($generated);
         $text = $domtree->createTextNode(date('Y-m-d H:i:s'));
@@ -110,7 +114,7 @@ class GenerateXml
         $offers->appendChild($currentprod);
 
         $currentprod->appendChild($domtree->createElement('identifier', $product_id));
-        $currentprod->appendChild($domtree->createElement('link', htmlentities(get_permalink( $product->get_id() ))));
+        $currentprod->appendChild($domtree->createElement('link', get_permalink( $product->get_id() )));
         $currentprod->appendChild($domtree->createElement('keywords', strip_tags(wc_get_product_category_list($product_id,'|','',''))));
         $currentprod->appendChild($domtree->createElement('brand', $attribute_name_all));
 

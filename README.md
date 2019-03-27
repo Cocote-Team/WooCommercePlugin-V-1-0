@@ -1,57 +1,29 @@
-# Cocote plugin for Woocommerce 3.4 to 3.5
+# Plugin Cocote pour WooCommerce 3.4 à 3.5
 
-This module generates feed and communicates with cocote.com website to let it aggregate your products data.
-
-1) Install the module
-
-Clone the Plugin : git clone https://github.com/Cocote-Team/WooCommercePlugin.git
-
-or
-
-Download the plugin .zip
-
-2) Transfer and copy
-
-Copy the file "woo-cocotefeed" to wp-content/plugins folder in your server.
-
-3) In the Back-Office
-
-Admin Wordpress : Plugins > Installed Plugins
-
-                   select "Activate".
-
-5) Configure
-
-Admin Wordpress : Plugins > Installed Plugins > WooCocote feed
-
-                    select "Settings".
-
-# Plugin Cocote pour Woocommerce 3.4 à 3.5
-
-Ce module communique avec Cocote.com et genere un flux xml de vos offres produits.
+Ce module communique avec Cocote.com et génére un flux XML de vos offres produits.
 
 Pour installer ce module:
 
-1) Le Plugin
+1) Télécharger https://github.com/Cocote-Team/WooCommercePlugin/raw/master/woo-cocotefeed.zip
 
-Cloner le Plugin : git clone https://github.com/Cocote-Team/WooCommercePlugin.git
-
-ou
-
-Télécharger le plugin en .zip
 
 2) Transfert et copie des fichiers
 
-Copier le dossier woo-cocotefeed dans le répertoire wp-content/plugins sur votre serveur.
 
-3) Activer le Plugin dans le Back-Office
+Aller sur votre Admin WordPress : Extensions > Ajouter et cliquer sur 'Tékéverser une extension'
 
-Admin Wordpress : Extensions > Extensions installées
+Faire un Drag'n'Drop du fichier téléchargé woo-cocotefeed.zip.
 
-                    cliquer sur "Activer".
 
-4) Configurer le Module
+3) Configurer le Module
 
-Admin Wordpress : Extensions > Extensions installées > WooCocote feed
 
-                    cliquer sur "Réglages".
+Cliquer sur l'élément 'Cocote Feed' au sein de l'item 'WooCommerce' dans le menu de gauche de l'Admin.
+                   
+Renseigner vos clés (diponibles depuis https://fr.cocote.com/mon-compte/ma-boutique/script-de-suivi ) 
+
+Cliquer sur enregistrer.
+
+Votre url flux est désormais disponible.
+
+Cot Cot Cot!

@@ -98,15 +98,7 @@ function exec_cashback($order_id, $status){
     $resultat_order = check_order( $order_id );
 
     if($resultat!=0 && isset($order_id) && isset($resultat->shop_id) && isset($resultat->private_key) && isset($resultat_order['orderPrice']) && isset($resultat_order['email'])) {
-
-        exec('php '.plugin_dir_path( __DIR__ ) . DIRECTORY_SEPARATOR . 'cashback-cocote.php'.
-            ' '.$resultat->shop_id.
-            ' '.$resultat->private_key.
-            ' '.$resultat_order['email'].
-            ' '.$order_id.
-            ' '.$resultat_order['orderPrice'].
-            ' '.$status.
-            ' '.$resultat_order['product_ids']
-            );
+        $cashback_cocote = new CashbackCocote($resultat->shop_id, $resultat->private_key, $resultat_order['email'], $order_id, $resultat_order['orderPrice'], 'EUR', $status, $resultat_order['product_ids']);
+        $cashback_cocote->sendOrderToCocote();
     }
 }

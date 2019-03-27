@@ -5,9 +5,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Cocotefeed
 {
-    public $name     ;
-    public $submenu  ;
-    public $action   ;
+    public $name;
+    public $version;
+    public $submenu;
+    public $action;
     public $url_plugin;
     private $url_xml_file;
     public $status_stock;
@@ -17,14 +18,15 @@ class Cocotefeed
         include_once plugin_dir_path( __DIR__ ).'includes'.DIRECTORY_SEPARATOR.'generate-xml.php';
 
         $this->name = 'Cocote feed';
+        $this->version = '1.0.3';
         $this->submenu = 'cocote-submenu-page';
         $this->action = 'save-cocotefeed';
         $this->url_plugin         = dirname( plugin_dir_url( __FILE__ ) ) . '/';
         $this->status_stock = false;
-        
+
         add_action('admin_menu', array($this,'config_cocotefeed_submenu_page'));
         add_action('admin_init', array($this, 'register_settings'));
-        add_action('wp_loaded', array($this, 'save_cocotefeed'));
+        //add_action('wp_loaded', array($this, 'save_cocotefeed'));
         add_action('woo_cocote', array($this,'woo_cocote_generate_xml' ));
     }
 
@@ -52,14 +54,14 @@ class Cocotefeed
                     $wpdb->update("{$wpdb->prefix}cocote_export",
                         array('shop_id' => $shop_id, 'private_key' => $private_key, 'export_xml' => $this->url_xml_file, 'export_status' => $status_stock),
                         array('id_export' => $row->id_export)
-                                );
+                    );
                 }
             }
         }
     }
 
     public function config_cocotefeed_submenu_page() {
-       add_submenu_page( 'woocommerce', $this->name, $this->name, 'manage_options', $this->submenu, array($this,'menu_html') );
+        add_submenu_page( 'woocommerce', $this->name, $this->name, 'manage_options', $this->submenu, array($this,'menu_html') );
     }
 
     public function menu_html()
@@ -67,13 +69,13 @@ class Cocotefeed
         echo "<h1 class='page-title'>Configurer</h1> ";
 
         echo '<form method="post" action="">';
-            wp_nonce_field($this->action, 'save-cocotefeed-verif');
-            echo '<fieldset class="fieldset-cocotefeed">';
-                echo '<legend>'; echo get_admin_page_title(); echo '</legend>';
-            settings_fields('cocote_feed_settings');
+        wp_nonce_field($this->action, 'save-cocotefeed-verif');
+        echo '<fieldset class="fieldset-cocotefeed">';
+        echo '<legend>'; echo get_admin_page_title(); echo '</legend>';
+        settings_fields('cocote_feed_settings');
 
-            do_settings_sections('cocote_feed_settings');
-            echo '</fieldset>
+        do_settings_sections('cocote_feed_settings');
+        echo '</fieldset>
             <p class="submit-cocotefeed">
                 <!-- <button type="submit" id="preview-btn" class="button-secondary preview-btn" value="Export XML" title="Exporter le catalogue en fichier XML;!"><a href="<?php if(isset($this->url_xml_file) && !empty($this->url_xml_file)){echo $this->url_xml_file;} ?>" target="_blank">Export XML</a></button> -->
                 <input type="submit" id="save-only-btn" name="save-only-btn" class="button-primary" value="Enregistrer" />
@@ -91,7 +93,7 @@ class Cocotefeed
         register_setting('cocote_feed_settings', 'url_xml');
         register_setting("cocote_feed_settings", "cocote_checkbox");
 
-        add_settings_section('cocote_feed_section', 'PARAMÈTRES', array($this, 'section_html'), 'cocote_feed_settings');
+        add_settings_section('cocote_feed_section', null, array($this, 'section_html'), 'cocote_feed_settings');
         add_settings_field('status', 'Status', array($this, 'status_html'), 'cocote_feed_settings', 'cocote_feed_section');
         add_settings_field('nb_product', 'Nombre de produit(s) à exporter', array($this, 'nb_product_html'), 'cocote_feed_settings', 'cocote_feed_section');
         add_settings_field('shop_id', 'Shop ID', array($this, 'shop_id_html'), 'cocote_feed_settings', 'cocote_feed_section');
@@ -128,28 +130,19 @@ class Cocotefeed
 
     public function url_xml()
     {
-        if (isset($_POST['save-only-btn']) && !empty($_POST['save-only-btn']) ) {
+        $row = $this->get_cocote_export();
+        if (!is_null($row)) {
             echo '<a href="'.
-                $this->url_xml_file.
+                $row->export_xml.
                 '" target="_blank">'.
-                $this->url_xml_file.
+                $row->export_xml.
                 '</a>';
-        }else{
-            $row = $this->get_cocote_export();
-            if (!is_null($row)) {
-                echo '<a href="'.
-                    $row->export_xml.
-                    '" target="_blank">'.
-                    $row->export_xml.
-                    '</a>';
-            }
         }
         echo '<p style="font-size: 11px;"><span>Votre flux sera réactualisé automatiquement chaque jour vers 3 heures (matin)</span><p>';
     }
 
     public function section_html()
     {
-        // RAS
     }
 
     public function shop_id_html()
@@ -169,7 +162,7 @@ class Cocotefeed
 
     public function private_key_html()
     {
-        echo '<input type="password" name="private_key" value="';
+        echo '<input type="text" name="private_key" value="';
 
         if (isset($_POST['private_key']) && !empty($_POST['private_key'])) {
             echo $_POST['private_key'];
@@ -180,6 +173,11 @@ class Cocotefeed
         echo '" required="required"/>';
         echo '<p style="font-size: 11px;"><span>Retrouvez votre clé privée depuis votre compte marchand Cocote.</span><p>';
 
+    }
+
+    public function getVersion()
+    {
+        return $this->version;
     }
 
     public static function check_Configuration_Status()
@@ -245,7 +243,7 @@ class Cocotefeed
 
         if (isset($_POST['cocote_checkbox']) && !empty($_POST['cocote_checkbox']))
             checked(1, $checked, true);
-         else
+        else
             checked(1, $checked, true);
 
         echo '/>';

@@ -1,13 +1,11 @@
 <?php
 /**
- * Plugin Name: WooCocote feed
- * Plugin URI: https://fr.cocote.com/mon-compte/ma-boutique/script-de-suivi
+ * Plugin Name: Cocote Feed
+ * Plugin URI: https://github.com/Cocote-Team/WooCommercePlugin
  * Description: Exporter le catalogue Woocommerce dans un flux XML pour Cocote
- * Version: 1.0.2
- * Author: Vang KU
- * Author URI: http://publish-it.fr/
- * Developer: Vang KU
- * Developer URI: http://publish-it.fr/
+ * Version: 1.0.3
+ * Author: Cocote Team
+ * Author URI: https://fr.cocote.com
  * Text Domain: woo-cocotefeed
  * Domain Path: /languages
  *
