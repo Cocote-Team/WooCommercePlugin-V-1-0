@@ -126,7 +126,7 @@ class GenerateXml
         $descTag->appendChild($domtree->createCDATASection(strip_tags($product->get_description())));
         $currentprod->appendChild($descTag);
 
-        $currentprod->appendChild($domtree->createElement('image_link', htmlentities(get_the_post_thumbnail_url( $product->get_id(), 'full' ))));
+        $currentprod->appendChild($domtree->createElement('image_link', get_the_post_thumbnail_url( $product->get_id(), 'full' )));
         $currentprod->appendChild($domtree->createElement('price', $product->get_price()));
         $currentprod->appendChild($domtree->createElement('gtin', ""));
 
