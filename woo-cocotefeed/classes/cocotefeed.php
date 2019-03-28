@@ -26,7 +26,7 @@ class Cocotefeed
 
         add_action('admin_menu', array($this,'config_cocotefeed_submenu_page'));
         add_action('admin_init', array($this, 'register_settings'));
-        //add_action('wp_loaded', array($this, 'save_cocotefeed'));
+        add_action('wp_loaded', array($this, 'save_cocotefeed'));
         add_action('woo_cocote', array($this,'woo_cocote_generate_xml' ));
     }
 
