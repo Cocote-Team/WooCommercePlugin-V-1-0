@@ -3,7 +3,7 @@
  * Plugin Name: Cocote Feed
  * Plugin URI: https://github.com/Cocote-Team/WooCommercePlugin
  * Description: Exporter le catalogue Woocommerce dans un flux XML pour Cocote
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author: Cocote Team
  * Author URI: https://fr.cocote.com
  * Text Domain: woo-cocotefeed

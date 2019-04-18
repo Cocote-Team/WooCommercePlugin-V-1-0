@@ -67,6 +67,12 @@ class GenerateXml
         $attr2->value = $this->wpbo_get_woo_version_number();
         $generated->appendChild($attr2);
 
+        if($this->isQTranslteXActive()){
+            $attr2 = $domtree->createAttribute('translation_plugin');
+            $attr2->value = 'woocommerce-qtranslate-x';
+            $generated->appendChild($attr2);
+        }
+
         $domtree->appendChild($generated);
         $generated = $root->appendChild($generated);
         $text = $domtree->createTextNode(date('Y-m-d H:i:s'));
@@ -119,14 +125,36 @@ class GenerateXml
         $currentprod->appendChild($domtree->createElement('brand', $attribute_name_all));
 
         $descTitle = $domtree->createElement('title');
-        $descTitle->appendChild($domtree->createCDATASection($product->get_name()));
-        $currentprod->appendChild($descTitle);
-
         $descTag = $domtree->createElement('description');
-        $descTag->appendChild($domtree->createCDATASection(strip_tags($product->get_description())));
-        $currentprod->appendChild($descTag);
 
-        $currentprod->appendChild($domtree->createElement('image_link', get_the_post_thumbnail_url( $product->get_id(), 'full' )));
+        if($this->isQTranslteXActive()){
+            foreach (qtranxf_split($product->get_name()) as $lang => $name)
+            {
+                $language = $domtree->createElement($lang);
+                $language->appendChild($domtree->createCDATASection($name));
+                $descTitle->appendChild($language);
+            }
+
+            $currentprod->appendChild($descTitle);
+
+            foreach (qtranxf_split(strip_tags($product->get_description())) as $lang => $desc)
+            {
+                $language = $domtree->createElement($lang);
+                $language->appendChild($domtree->createCDATASection($desc));
+                $descTag->appendChild($language);
+            }
+
+            $currentprod->appendChild($descTag);
+
+        }else{
+            $descTitle->appendChild($domtree->createCDATASection($product->get_name()));
+            $currentprod->appendChild($descTitle);
+            $descTag->appendChild($domtree->createCDATASection(strip_tags($product->get_description())));
+            $currentprod->appendChild($descTag);
+        }
+
+
+        $currentprod->appendChild($domtree->createElement('image_link', wp_get_attachment_url($product->get_image_id())));
         $currentprod->appendChild($domtree->createElement('price', $product->get_price()));
         $currentprod->appendChild($domtree->createElement('gtin', ""));
 
@@ -200,5 +228,16 @@ class GenerateXml
         return str_replace( array('à','á','â','ã','ä', 'ç', 'è','é','ê','ë', 'ì','í','î','ï', 'ñ', 'ò','ó','ô','õ','ö', 'ù','ú','û','ü', 'ý','ÿ', 'À','Á','Â','Ã','Ä', 'Ç', 'È','É','Ê','Ë', 'Ì','Í','Î','Ï', 'Ñ', 'Ò','Ó','Ô','Õ','Ö', 'Ù','Ú','Û','Ü', 'Ý'),
             array('a','a','a','a','a', 'c', 'e','e','e','e', 'i','i','i','i', 'n', 'o','o','o','o','o', 'u','u','u','u', 'y','y', 'A','A','A','A','A', 'C', 'E','E','E','E', 'I','I','I','I', 'N', 'O','O','O','O','O', 'U','U','U','U', 'Y'),
             $text);
+    }
+
+    private function isQTranslteXActive(){
+        $active_plugins = apply_filters('active_plugins', get_option('active_plugins'));
+
+        if(in_array('woocommerce-qtranslate-x/woocommerce-qtranslate-x.php', $active_plugins))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -18,7 +18,7 @@ class Cocotefeed
         include_once plugin_dir_path( __DIR__ ).'includes'.DIRECTORY_SEPARATOR.'generate-xml.php';
 
         $this->name = 'Cocote feed';
-        $this->version = '1.0.4';
+        $this->version = '1.0.5';
         $this->submenu = 'cocote-submenu-page';
         $this->action = 'save-cocotefeed';
         $this->url_plugin         = dirname( plugin_dir_url( __FILE__ ) ) . '/';
@@ -255,7 +255,7 @@ class Cocotefeed
         // check if scheduled hook exists
         if (! wp_next_scheduled ( 'woo_cocote' )) {
             date_default_timezone_set('Europe/Paris');
-            wp_schedule_event(mktime(3, 0, 0, 1, 15, 2019), 'daily', 'woo_cocote');
+            wp_schedule_event(mktime(3,0,0), 'daily', 'woo_cocote');
         }
     }
 
