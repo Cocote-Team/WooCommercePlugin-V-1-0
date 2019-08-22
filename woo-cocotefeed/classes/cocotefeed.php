@@ -18,7 +18,7 @@ class Cocotefeed
         include_once plugin_dir_path( __DIR__ ).'includes'.DIRECTORY_SEPARATOR.'generate-xml.php';
 
         $this->name = 'Cocote feed';
-        $this->version = '1.0.5';
+        $this->version = '1.1.0';
         $this->submenu = 'cocote-submenu-page';
         $this->action = 'save-cocotefeed';
         $this->url_plugin         = dirname( plugin_dir_url( __FILE__ ) ) . '/';

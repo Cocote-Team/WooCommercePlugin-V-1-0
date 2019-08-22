@@ -3,6 +3,10 @@
 add_action( 'woocommerce_order_status_completed', 'mysite_woocommerce_order_status_completed', 10, 1 );
 add_action( 'woocommerce_order_status_cancelled', 'mysite_woocommerce_order_status_cancelled', 10, 1 );
 add_action( 'woocommerce_new_order', 'tracking_confirm_script_js_for_wc_order',  1, 1  );
+add_action( 'after_setup_theme', function()
+{
+    require plugin_dir_path( __FILE__ ).'/../cashback-cocote.php';
+}, 5 );
 
 /**
  * @param $order_id
