@@ -1,4 +1,5 @@
 # files
 
 # folders
+.idea/*
 woo-cocofeeed/log/*.log

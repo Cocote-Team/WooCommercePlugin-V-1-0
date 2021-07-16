@@ -168,6 +168,13 @@ class GenerateXml
 
         $currentprod->appendChild($domtree->createElement('category', $this->enleverCaracteresSpeciaux($categoriesAll)));
 
+        if ($product->is_in_stock() && !is_null($product->get_stock_quantity()) && intval($product->get_stock_quantity()) > 0) {
+            $currentprod->appendChild($domtree->createElement('stock', intval($product->get_stock_quantity())));
+        }
+
+        if (floatval($product->get_weight()) > 0) {
+            $currentprod->appendChild($domtree->createElement('weight', floatval($product->get_weight())));
+        }
     }
 
     /**
