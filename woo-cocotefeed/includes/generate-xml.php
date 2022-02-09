@@ -1,8 +1,5 @@
 <?php
 
-/**
- * Class GenerateXml
- */
 class GenerateXml
 {
     private $domtree;
@@ -11,15 +8,12 @@ class GenerateXml
     private $xmlFile;
     private $cms;
 
-    /**
-     * GenerateXml constructor.
-     */
     public function __construct()
     {
         $this->domtree = new DOMDocument('1.0', 'UTF-8');
         $this->protocol = $this->checkHTTPS();
         $this->langID = 1;
-        $this->xmlFile = hash('crc32',__FILE__).'.xml';
+        $this->xmlFile = hash('crc32',__FILE__) . '.xml';
         $this->cms = 'woocommerce';
     }
 
@@ -29,29 +23,29 @@ class GenerateXml
      */
     public function initContent($status_stock)
     {
-        if(Cocotefeed::check_Configuration_Status() !== 'ACTIVE'){
+        if (Cocotefeed::check_Configuration_Status() !== 'ACTIVE') {
             die();
         }
 
         // Get product ids.
-        if($status_stock) {
+        if ($status_stock) {
             $args = array(
                 'limit' => -1,
                 'status' => 'publish',
                 'return' => 'ids',
             );
-        }else{
+        } else {
             $args = array(
                 'limit' => -1,
                 'return' => 'ids',
             );
         }
 
-        $products = wc_get_products( $args );
+        $products = wc_get_products($args);
 
         $domtree = new DOMDocument('1.0', 'UTF-8');
 
-        $root= $domtree->createElement("shop");
+        $root = $domtree->createElement("shop");
         $xmlRoot = $domtree->appendChild($root);
 
         $generated = $domtree->createElement('generated');
@@ -67,7 +61,7 @@ class GenerateXml
         $attr2->value = $this->wpbo_get_woo_version_number();
         $generated->appendChild($attr2);
 
-        if($this->isQTranslteXActive()){
+        if ($this->isQTranslteXActive()) {
             $attr2 = $domtree->createAttribute('translation_plugin');
             $attr2->value = 'woocommerce-qtranslate-x';
             $generated->appendChild($attr2);
@@ -81,12 +75,12 @@ class GenerateXml
         $xmlRootTemponary = $domtree->createElement("offers");
         $xmlRoot = $xmlRoot->appendChild($xmlRootTemponary);
 
-        foreach($products as $product){
+        foreach ($products as $product) {
             $this->getItemInnerXmlElements($product, $domtree);
         }
 
         $domtree->save($this->xmlFile);
-        $path = $this->directoryXml(getcwd(). DIRECTORY_SEPARATOR .$this->xmlFile);
+        $path = $this->directoryXml(getcwd() . DIRECTORY_SEPARATOR . $this->xmlFile);
         return $this->xmlFile;
     }
 
@@ -100,14 +94,15 @@ class GenerateXml
 
         $attribute_name_all = '';
         foreach ($product->get_attributes() as $attribute) {
-            $attribute_name = $attribute['name']; $i = 0;
+            $attribute_name = $attribute['name'];
+            $i = 0;
             if (substr($attribute_name, 0, 3) == 'pa_') {
                 $attribute_name = substr($attribute_name, 3, strlen($attribute_name));
-                if($i == 0) {
+                if ($i == 0) {
                     $attribute_name_all .= $attribute_name;
-                }else {
+                } else {
                     if ($attribute_name != '') {
-                        $attribute_name_all .= '|'.$attribute_name;
+                        $attribute_name_all .= '|' . $attribute_name;
                     }
                 }
                 $i++;
@@ -120,16 +115,15 @@ class GenerateXml
         $offers->appendChild($currentprod);
 
         $currentprod->appendChild($domtree->createElement('identifier', $product_id));
-        $currentprod->appendChild($domtree->createElement('link', get_permalink( $product->get_id() )));
-        $currentprod->appendChild($domtree->createElement('keywords', strip_tags(wc_get_product_category_list($product_id,'|','',''))));
+        $currentprod->appendChild($domtree->createElement('link', get_permalink($product->get_id())));
+        $currentprod->appendChild($domtree->createElement('keywords', strip_tags(wc_get_product_category_list($product_id, '|', '', ''))));
         $currentprod->appendChild($domtree->createElement('brand', $attribute_name_all));
 
         $descTitle = $domtree->createElement('title');
         $descTag = $domtree->createElement('description');
 
-        if($this->isQTranslteXActive()){
-            foreach (qtranxf_split($product->get_name()) as $lang => $name)
-            {
+        if ($this->isQTranslteXActive()) {
+            foreach (qtranxf_split($product->get_name()) as $lang => $name) {
                 $language = $domtree->createElement($lang);
                 $language->appendChild($domtree->createCDATASection($name));
                 $descTitle->appendChild($language);
@@ -137,8 +131,7 @@ class GenerateXml
 
             $currentprod->appendChild($descTitle);
 
-            foreach (qtranxf_split(strip_tags($product->get_description())) as $lang => $desc)
-            {
+            foreach (qtranxf_split(strip_tags($product->get_description())) as $lang => $desc) {
                 $language = $domtree->createElement($lang);
                 $language->appendChild($domtree->createCDATASection($desc));
                 $descTag->appendChild($language);
@@ -146,30 +139,32 @@ class GenerateXml
 
             $currentprod->appendChild($descTag);
 
-        }else{
+        } else {
             $descTitle->appendChild($domtree->createCDATASection($product->get_name()));
             $currentprod->appendChild($descTitle);
             $descTag->appendChild($domtree->createCDATASection(strip_tags($product->get_description())));
             $currentprod->appendChild($descTag);
         }
 
-
         $currentprod->appendChild($domtree->createElement('image_link', wp_get_attachment_url($product->get_image_id())));
         $currentprod->appendChild($domtree->createElement('price', $product->get_price()));
         $currentprod->appendChild($domtree->createElement('gtin', ""));
 
-        if($product->get_sku() != '')
+        if ($product->get_sku() != '') {
             $currentprod->appendChild($domtree->createElement('mpn', $product->get_sku()));
-        else
+        } else {
             $currentprod->appendChild($domtree->createElement('mpn', $product_id));
+        }
 
-        $categoriesAll = strtolower(strip_tags(wc_get_product_category_list($product_id,' > ','','')));
-        $categoriesAll = str_replace("->-", " > ",str_replace(" ", "-", $categoriesAll));
+        $categoriesAll = strtolower(strip_tags(wc_get_product_category_list($product_id, ' > ', '', '')));
+        $categoriesAll = str_replace("->-", " > ", str_replace(" ", "-", $categoriesAll));
 
         $currentprod->appendChild($domtree->createElement('category', $this->enleverCaracteresSpeciaux($categoriesAll)));
 
         if ($product->is_in_stock() && !is_null($product->get_stock_quantity()) && intval($product->get_stock_quantity()) > 0) {
             $currentprod->appendChild($domtree->createElement('stock', intval($product->get_stock_quantity())));
+        } else {
+            $currentprod->appendChild($domtree->createElement('stock', 0));
         }
 
         if (floatval($product->get_weight()) > 0) {
@@ -182,7 +177,7 @@ class GenerateXml
      */
     private function checkHTTPS()
     {
-        if(isset($_SERVER['HTTPS'])){
+        if (isset($_SERVER['HTTPS'])) {
             return 'https';
         } else {
             return 'http';
@@ -193,13 +188,16 @@ class GenerateXml
      * @param $xmlFileLocal
      * @return string
      */
-    private function directoryXml($xmlFileLocal){
-        chdir( WP_CONTENT_DIR );
+    private function directoryXml($xmlFileLocal)
+    {
+        chdir(WP_CONTENT_DIR);
         chdir('..');
-        if(!file_exists('feed')){
-            mkdir ('feed');
+
+        if (!file_exists('feed')) {
+            mkdir('feed');
         }
-        $path = getcwd(). DIRECTORY_SEPARATOR .'feed' . DIRECTORY_SEPARATOR .$this->xmlFile;
+
+        $path = getcwd() . DIRECTORY_SEPARATOR . 'feed' . DIRECTORY_SEPARATOR . $this->xmlFile;
         rename($xmlFileLocal, $path);
 
         return $path;
@@ -208,19 +206,20 @@ class GenerateXml
     /**
      * @return string|null
      */
-    private function wpbo_get_woo_version_number() {
+    private function wpbo_get_woo_version_number()
+    {
         // If get_plugins() isn't available, require it
-        if ( ! function_exists( 'get_plugins' ) )
-            require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+        if (!function_exists('get_plugins')) {
+            require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+        }
 
         // Create the plugins folder and file variables
-        $plugin_folder = get_plugins( '/' . 'woocommerce' );
+        $plugin_folder = get_plugins('/' . 'woocommerce');
         $plugin_file = 'woocommerce.php';
 
         // If the plugin version number is set, return it
-        if ( isset( $plugin_folder[$plugin_file]['Version'] ) ) {
+        if (isset( $plugin_folder[$plugin_file]['Version'])) {
             return $plugin_folder[$plugin_file]['Version'];
-
         } else {
             // Otherwise return null
             return NULL;
@@ -231,17 +230,20 @@ class GenerateXml
      * @param $text
      * @return mixed
      */
-    public function enleverCaracteresSpeciaux($text) {
-        return str_replace( array('à','á','â','ã','ä', 'ç', 'è','é','ê','ë', 'ì','í','î','ï', 'ñ', 'ò','ó','ô','õ','ö', 'ù','ú','û','ü', 'ý','ÿ', 'À','Á','Â','Ã','Ä', 'Ç', 'È','É','Ê','Ë', 'Ì','Í','Î','Ï', 'Ñ', 'Ò','Ó','Ô','Õ','Ö', 'Ù','Ú','Û','Ü', 'Ý'),
+    public function enleverCaracteresSpeciaux($text)
+    {
+        return str_replace(
+            array('à','á','â','ã','ä', 'ç', 'è','é','ê','ë', 'ì','í','î','ï', 'ñ', 'ò','ó','ô','õ','ö', 'ù','ú','û','ü', 'ý','ÿ', 'À','Á','Â','Ã','Ä', 'Ç', 'È','É','Ê','Ë', 'Ì','Í','Î','Ï', 'Ñ', 'Ò','Ó','Ô','Õ','Ö', 'Ù','Ú','Û','Ü', 'Ý'),
             array('a','a','a','a','a', 'c', 'e','e','e','e', 'i','i','i','i', 'n', 'o','o','o','o','o', 'u','u','u','u', 'y','y', 'A','A','A','A','A', 'C', 'E','E','E','E', 'I','I','I','I', 'N', 'O','O','O','O','O', 'U','U','U','U', 'Y'),
-            $text);
+            $text
+        );
     }
 
-    private function isQTranslteXActive(){
+    private function isQTranslteXActive()
+    {
         $active_plugins = apply_filters('active_plugins', get_option('active_plugins'));
 
-        if(in_array('woocommerce-qtranslate-x/woocommerce-qtranslate-x.php', $active_plugins))
-        {
+        if (in_array('woocommerce-qtranslate-x/woocommerce-qtranslate-x.php', $active_plugins)) {
             return true;
         }
 

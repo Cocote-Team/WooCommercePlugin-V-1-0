@@ -1,5 +1,6 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
+
+if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
@@ -15,13 +16,13 @@ class Cocotefeed
 
     public function __construct()
     {
-        include_once plugin_dir_path( __DIR__ ).'includes'.DIRECTORY_SEPARATOR.'generate-xml.php';
+        include_once plugin_dir_path(__DIR__) . 'includes' . DIRECTORY_SEPARATOR . 'generate-xml.php';
 
         $this->name = 'Cocote feed';
-        $this->version = '1.1.1';
+        $this->version = '1.1.2';
         $this->submenu = 'cocote-submenu-page';
         $this->action = 'save-cocotefeed';
-        $this->url_plugin         = dirname( plugin_dir_url( __FILE__ ) ) . '/';
+        $this->url_plugin = dirname(plugin_dir_url(__FILE__ )) . '/';
         $this->status_stock = false;
 
         add_action('admin_menu', array($this,'config_cocotefeed_submenu_page'));
@@ -34,34 +35,63 @@ class Cocotefeed
     {
         if (isset($_POST['save-only-btn']) && !empty($_POST['save-only-btn'])) {
             if (wp_verify_nonce($_POST['save-cocotefeed-verif'], $this->action)) {
-
                 global $wpdb;
 
                 $shop_id = $_POST['shop_id'];
                 $private_key = $_POST['private_key'];
                 $status_stock = false;
-                if (isset($_POST['cocote_checkbox']) && !empty($_POST['cocote_checkbox']))
+
+                if (isset($_POST['cocote_checkbox']) && !empty($_POST['cocote_checkbox'])) {
                     $status_stock = $_POST['cocote_checkbox'];
+                }
 
                 $this->url_xml_file = $this->generate_cocote_Xml($status_stock);
 
                 $row = $this->get_cocote_export();
+
                 if (is_null($row)) {
                     // insert
-                    $wpdb->insert("{$wpdb->prefix}cocote_export", array('shop_id' => $shop_id, 'private_key' => $private_key, 'export_xml' => $this->url_xml_file, 'export_status' => $status_stock));
+                    $wpdb->insert(
+                        "{$wpdb->prefix}cocote_export",
+                        array(
+                            'shop_id' => $shop_id,
+                            'private_key' => $private_key,
+                            'export_xml' => $this->url_xml_file,
+                            'export_status' => $status_stock
+                        )
+                    );
                 } else {
                     // update
-                    $wpdb->update("{$wpdb->prefix}cocote_export",
-                        array('shop_id' => $shop_id, 'private_key' => $private_key, 'export_xml' => $this->url_xml_file, 'export_status' => $status_stock),
-                        array('id_export' => $row->id_export)
+                    $wpdb->update(
+                        "{$wpdb->prefix}cocote_export",
+                        array(
+                            'shop_id' => $shop_id,
+                            'private_key' => $private_key,
+                            'export_xml' => $this->url_xml_file,
+                            'export_status' => $status_stock
+                        ),
+                        array(
+                            'id_export' => $row->id_export
+                        )
                     );
                 }
             }
         }
     }
 
-    public function config_cocotefeed_submenu_page() {
-        add_submenu_page( 'woocommerce', $this->name, $this->name, 'manage_options', $this->submenu, array($this,'menu_html') );
+    public function config_cocotefeed_submenu_page()
+    {
+        add_submenu_page(
+            'woocommerce',
+            $this->name,
+            $this->name,
+            'manage_options',
+            $this->submenu,
+            array(
+                $this,
+                'menu_html'
+            )
+        );
     }
 
     public function menu_html()
@@ -103,7 +133,7 @@ class Cocotefeed
 
 
         $resultat = check_cocote_export();
-        if(isset($resultat->shop_id)) {
+        if (isset($resultat->shop_id)) {
             update_option('shop_id', $resultat->shop_id);// = $resultat->shop_id;
             update_option('private_key', $resultat->private_key);// = $resultat->private_key;
             update_option('cocote_checkbox', $resultat->export_status);// =$resultat->export_status;
@@ -115,7 +145,8 @@ class Cocotefeed
     {
         echo '<input type="text" name="status_html" value="'.
             $this->check_Configuration_Status().
-            '" readonly="readonly" />';
+            '" readonly="readonly" />'
+        ;
     }
 
     public function nb_product_html()
@@ -187,7 +218,7 @@ class Cocotefeed
         $args = array(
             'status' => 'publish',
         );
-        $products = wc_get_products( $args );
+        $products = wc_get_products($args);
         if (isset($products) && !empty($products)) {
             $status = 'ACTIVE';
         }
@@ -195,22 +226,25 @@ class Cocotefeed
         return $status;
     }
 
-    public static function check_nb_product($status_stock){
+    public static function check_nb_product($status_stock)
+    {
         // Get product ids.
         $nb_product = 0;
-        if($status_stock) {
+        if ($status_stock) {
             $args = array(
                 'limit' => -1,
                 'status' => 'publish',
                 'return' => 'ids',
             );
-        }else{
+        } else {
             $args = array(
                 'limit' => -1,
                 'return' => 'ids',
             );
         }
-        $products = wc_get_products( $args );
+
+        $products = wc_get_products($args);
+
         if (isset($products) && !empty($products)) {
             $nb_product = count($products);
         }
@@ -224,55 +258,56 @@ class Cocotefeed
         $generateXml = new GenerateXml;
         $xmlName = $generateXml->initContent($status_stock);
 
-        $url = site_url().DIRECTORY_SEPARATOR.'feed'.DIRECTORY_SEPARATOR.$xmlName;
+        $url = site_url() . DIRECTORY_SEPARATOR . 'feed' . DIRECTORY_SEPARATOR . $xmlName;
 
         return $url;
     }
 
     public function checkbox_display()
     {
-
         if (isset($_POST['cocote_checkbox']) && !empty($_POST['cocote_checkbox'])) {
             $checked = $_POST['cocote_checkbox'];
-        }
-        else {
+        } else {
             $checked = get_option('cocote_checkbox');
         }
 
         echo '<input type="checkbox" name="cocote_checkbox" value="1"';
 
-        if (isset($_POST['cocote_checkbox']) && !empty($_POST['cocote_checkbox']))
+        if (isset($_POST['cocote_checkbox']) && !empty($_POST['cocote_checkbox'])) {
             checked(1, $checked, true);
-        else
+        } else {
             checked(1, $checked, true);
+        }
 
         echo '/>';
-
     }
 
     public static function cron_cocote_generate_xml()
     {
         // check if scheduled hook exists
-        if (! wp_next_scheduled ( 'woo_cocote' )) {
+        if (!wp_next_scheduled('woo_cocote')) {
             date_default_timezone_set('Europe/Paris');
-            wp_schedule_event(mktime(3,0,0), 'daily', 'woo_cocote');
+            wp_schedule_event(mktime(3, 0, 0), 'daily', 'woo_cocote');
         }
     }
 
-    public function woo_cocote_generate_xml() {
+    public function woo_cocote_generate_xml()
+    {
         // generate xml by cron
         $row = $this->get_cocote_export();
+
         if (is_null($row)) {
             $cron_status_stock = $this->status_stock;
         } else {
             $cron_status_stock = $row->export_status;
         }
+
         $this->generate_cocote_Xml($cron_status_stock);
     }
 
-    public function get_cocote_export(){
+    public function get_cocote_export()
+    {
         global $wpdb;
-
         $row = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}cocote_export WHERE 1");
 
         return $row;
