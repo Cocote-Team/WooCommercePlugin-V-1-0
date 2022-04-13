@@ -32,7 +32,7 @@ Cot Cot Cot!
 
 Pour faire fonctionner les crons sur WordPress il faut faire les choses suivantes :
 
-- Télécharger le module cronjobs https://github.com/Cocote-Team/WooCommercePlugin/raw/master/wp-control.zip
+- Télécharger le module cronjobs https://github.com/Cocote-Team/WooCommercePlugin/blob/master/wp-crontrol.zip
 - Aller sur votre Admin WordPress : Extensions > Ajouter et cliquer sur 'Téléverser une extension'
 - Faire un Drag n Drop du fichier téléchargé wp-control.zip.
 - Une fois installer, au sein de la liste des extensions cliquer sur le lien "Évènements" de l'extension **WP Control**
