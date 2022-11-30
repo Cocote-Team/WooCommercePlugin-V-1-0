@@ -20,7 +20,7 @@ Faire un Drag'n'Drop du fichier téléchargé woo-cocotefeed.zip.
 
 Cliquer sur l'élément 'Cocote Feed' au sein de l'item 'WooCommerce' dans le menu de gauche de l'Admin.
                    
-Renseigner vos clés (diponibles depuis https://fr.cocote.com/mon-compte/ma-boutique/script-de-suivi ) 
+Renseigner vos clés (diponibles depuis https://fr.cocote.com/mon-compte/ma-boutique/doc/pixel ) 
 
 Cliquer sur enregistrer.
 
